@@ -51,6 +51,7 @@ model User {
   ownedWorkspaces Workspace[] @relation("WorkspaceOwner")
   memberships     WorkspaceMember[]
   assignedTasks   Task[]    @relation("TaskAssignee")
+  ledProjects     Project[] @relation("ProjectLeader")
   comments        Comment[]
   activities      Activity[]
 }
@@ -94,6 +95,10 @@ model Project {
   description String?
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  projectLeaderId String?
+  projectLeader   User?   @relation("ProjectLeader", fields: [projectLeaderId], references: [id])
+
   tasks       Task[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -105,6 +110,7 @@ model Task {
   description String?
   status      String       @default("TODO") // BACKLOG, TODO, IN_PROGRESS, DONE
   priority    String       @default("MEDIUM") // LOW, MEDIUM, HIGH
+  startDate   DateTime?
   dueDate     DateTime?
   projectId   String
   project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -115,6 +121,10 @@ model Task {
   parentId    String?
   parent      Task?        @relation("Subtasks", fields: [parentId], references: [id], onDelete: Cascade)
   subtasks    Task[]       @relation("Subtasks")
+
+  // Dependencies relationship
+  predecessors Task[]      @relation("TaskDependencies")
+  successors   Task[]      @relation("TaskDependencies")
 
   comments    Comment[]
   activities  Activity[]

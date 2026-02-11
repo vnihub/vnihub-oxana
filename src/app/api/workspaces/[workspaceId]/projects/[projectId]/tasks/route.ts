@@ -16,7 +16,6 @@ export async function GET(
     }
 
     const { projectId } = await params;
-    console.log(`[API] Fetching tasks for project: ${projectId}`);
 
     const tasks = await prisma.task.findMany({
       where: {
@@ -25,13 +24,14 @@ export async function GET(
       },
       include: {
         assignee: true,
+        predecessors: true,
+        successors: true,
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    console.log(`[API] Found ${tasks.length} tasks for project ${projectId}`);
     return NextResponse.json(tasks);
   } catch (error: any) {
     console.error("[TASKS_GET] Error:", error.message);
@@ -51,8 +51,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    console.log("[API] Creating task with data:", body);
-    const { title, description, status, priority, dueDate, assigneeId, parentId } = body;
+    const { title, description, status, priority, startDate, dueDate, assigneeId, parentId } = body;
 
     if (!title) {
       return new NextResponse("Title is required", { status: 400 });
@@ -66,14 +65,13 @@ export async function POST(
         description,
         status: status || "TODO",
         priority: priority || "MEDIUM",
+        startDate: startDate ? new Date(startDate) : null,
         dueDate: dueDate ? new Date(dueDate) : null,
         projectId,
         assigneeId,
-        parentId: parentId || null, // Explicitly set to null if not provided
+        parentId: parentId || null,
       },
     });
-
-    console.log("[API] Task created successfully:", task.id);
 
     // Trigger real-time update
     if (pusherServer) {

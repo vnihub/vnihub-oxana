@@ -10,6 +10,16 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 export default function CreateProjectPage({
   params,
 }: {
@@ -19,7 +29,17 @@ export default function CreateProjectPage({
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [projectLeaderId, setProjectLeaderId] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: members } = useQuery({
+    queryKey: ["members", workspaceId],
+    queryFn: async () => {
+      const res = await fetch(`/api/workspaces/${workspaceId}/members`);
+      if (!res.ok) throw new Error("Failed to fetch members");
+      return res.json();
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +49,7 @@ export default function CreateProjectPage({
       const res = await fetch(`/api/workspaces/${workspaceId}/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description }),
+        body: JSON.stringify({ name, description, projectLeaderId }),
       });
 
       if (!res.ok) {
@@ -77,8 +97,32 @@ export default function CreateProjectPage({
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
+            <div className="space-y-2">
+              <Label>Project Leader</Label>
+              <Select 
+                value={projectLeaderId} 
+                onValueChange={setProjectLeaderId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a project leader" />
+                </SelectTrigger>
+                <SelectContent>
+                  {members?.map((member: any) => (
+                    <SelectItem key={member.id} value={member.id}>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-5 w-5">
+                          <AvatarImage src={member.image} />
+                          <AvatarFallback>{member.name?.[0]}</AvatarFallback>
+                        </Avatar>
+                        <span>{member.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
-          <CardFooter className="flex gap-2">
+          <CardFooter className="flex gap-2 pt-6">
             <Button 
               type="button" 
               variant="outline" 

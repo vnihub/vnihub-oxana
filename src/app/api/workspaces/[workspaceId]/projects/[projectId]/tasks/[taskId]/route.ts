@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { pusherServer } from "@/lib/pusher";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { format } from "date-fns";
 
 export async function GET(
   req: Request,
@@ -105,12 +106,12 @@ export async function PATCH(
 
     const { taskId, projectId } = await params;
     const body = await req.json();
-    const { status, priority, title, description, assigneeId, dueDate } = body;
+    const { status, priority, title, description, assigneeId, startDate, dueDate, predecessorIds } = body;
 
     // Fetch the current task state to compare changes
     const currentTask = await prisma.task.findUnique({
       where: { id: taskId },
-      include: { assignee: true }
+      include: { assignee: true, predecessors: true }
     });
 
     if (!currentTask) {
@@ -128,7 +129,11 @@ export async function PATCH(
         title,
         description,
         assigneeId,
+        startDate: startDate ? new Date(startDate) : undefined,
         dueDate: dueDate ? new Date(dueDate) : undefined,
+        predecessors: predecessorIds ? {
+          set: predecessorIds.map((id: string) => ({ id }))
+        } : undefined,
       },
     });
 
@@ -138,6 +143,15 @@ export async function PATCH(
       activities.push({
         type: "STATUS_CHANGED",
         description: `changed status from ${currentTask.status} to ${status}`,
+        taskId,
+        userId: session.user.id,
+      });
+    }
+    // ... (rest of activities)
+    if (predecessorIds) {
+      activities.push({
+        type: "DEPENDENCIES_CHANGED",
+        description: "updated task dependencies",
         taskId,
         userId: session.user.id,
       });
@@ -154,6 +168,22 @@ export async function PATCH(
       activities.push({
         type: "TITLE_CHANGED",
         description: `renamed task to "${title}"`,
+        taskId,
+        userId: session.user.id,
+      });
+    }
+    if (startDate && new Date(startDate).getTime() !== currentTask.startDate?.getTime()) {
+      activities.push({
+        type: "START_DATE_CHANGED",
+        description: `changed start date to ${format(new Date(startDate), "PPP")}`,
+        taskId,
+        userId: session.user.id,
+      });
+    }
+    if (dueDate && new Date(dueDate).getTime() !== currentTask.dueDate?.getTime()) {
+      activities.push({
+        type: "DUE_DATE_CHANGED",
+        description: `changed due date to ${format(new Date(dueDate), "PPP")}`,
         taskId,
         userId: session.user.id,
       });

@@ -31,11 +31,14 @@ export function TaskListView({ workspaceId, projectId }: TaskListViewProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  const { data: tasks, isLoading, refetch } = useQuery<TaskWithAssignee[]>({
+  const { data: tasks, isLoading, error, refetch } = useQuery<TaskWithAssignee[]>({
     queryKey: ["tasks", projectId],
     queryFn: async () => {
       const res = await fetch(`/api/workspaces/${workspaceId}/projects/${projectId}/tasks`);
-      if (!res.ok) throw new Error("Failed to fetch tasks");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to fetch tasks");
+      }
       return res.json();
     },
   });

@@ -215,6 +215,7 @@ export function KanbanBoard({ workspaceId, projectId }: KanbanBoardProps) {
         workspaceId={workspaceId}
         projectId={projectId}
         onSuccess={() => queryClient.invalidateQueries({ queryKey: ["tasks", projectId] })}
+        initialStatus={initialStatus}
       />
 
       <TaskDetailSheet 

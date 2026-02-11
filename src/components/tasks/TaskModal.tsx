@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -41,6 +41,7 @@ interface TaskModalProps {
   workspaceId: string;
   projectId: string;
   onSuccess: () => void;
+  initialStatus?: TaskStatus;
 }
 
 export function TaskModal({ 
@@ -48,17 +49,32 @@ export function TaskModal({
   onClose, 
   workspaceId, 
   projectId,
-  onSuccess 
+  onSuccess,
+  initialStatus = "TODO"
 }: TaskModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    status: "TODO" as TaskStatus,
+    status: initialStatus,
     priority: "MEDIUM" as TaskPriority,
     assigneeId: undefined as string | undefined,
+    startDate: undefined as Date | undefined,
     dueDate: undefined as Date | undefined,
   });
+
+  // Update status when initialStatus changes or modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(prev => ({
+        ...prev,
+        status: initialStatus
+      }));
+    }
+  }, [initialStatus, isOpen]);
+
+  const [isStartDateOpen, setIsStartDatePopoverOpen] = useState(false);
+  const [isDueDateOpen, setIsDueDatePopoverOpen] = useState(false);
 
   const { data: members } = useQuery({
     queryKey: ["members", workspaceId],
@@ -94,6 +110,7 @@ export function TaskModal({
         status: "TODO",
         priority: "MEDIUM",
         assigneeId: undefined,
+        startDate: undefined,
         dueDate: undefined,
       });
     } catch (error: any) {
@@ -133,34 +150,63 @@ export function TaskModal({
             />
           </div>
 
+          <div className="space-y-2">
+            <Label>Assignee</Label>
+            <Select 
+              value={formData.assigneeId} 
+              onValueChange={(value) => setFormData({ ...formData, assigneeId: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select assignee" />
+              </SelectTrigger>
+              <SelectContent>
+                {members?.map((member: any) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-5 w-5">
+                        <AvatarImage src={member.image} />
+                        <AvatarFallback>{member.name?.[0]}</AvatarFallback>
+                      </Avatar>
+                      <span>{member.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Assignee</Label>
-              <Select 
-                value={formData.assigneeId} 
-                onValueChange={(value) => setFormData({ ...formData, assigneeId: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select assignee" />
-                </SelectTrigger>
-                <SelectContent>
-                  {members?.map((member: any) => (
-                    <SelectItem key={member.id} value={member.id}>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-5 w-5">
-                          <AvatarImage src={member.image} />
-                          <AvatarFallback>{member.name?.[0]}</AvatarFallback>
-                        </Avatar>
-                        <span>{member.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Start Date</Label>
+              <Popover open={isStartDateOpen} onOpenChange={setIsStartDatePopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !formData.startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.startDate ? format(formData.startDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.startDate}
+                    onSelect={(date) => {
+                      setFormData({ ...formData, startDate: date });
+                      setIsStartDatePopoverOpen(false);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-2">
               <Label>Due Date</Label>
-              <Popover>
+              <Popover open={isDueDateOpen} onOpenChange={setIsDueDatePopoverOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant={"outline"}
@@ -177,7 +223,10 @@ export function TaskModal({
                   <Calendar
                     mode="single"
                     selected={formData.dueDate}
-                    onSelect={(date) => setFormData({ ...formData, dueDate: date })}
+                    onSelect={(date) => {
+                      setFormData({ ...formData, dueDate: date });
+                      setIsDueDatePopoverOpen(false);
+                    }}
                     initialFocus
                   />
                 </PopoverContent>

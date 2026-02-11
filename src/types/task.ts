@@ -9,4 +9,6 @@ export type TaskWithAssignee = Task & {
     name: string | null;
     image: string | null;
   } | null;
+  predecessors?: Task[];
+  successors?: Task[];
 };

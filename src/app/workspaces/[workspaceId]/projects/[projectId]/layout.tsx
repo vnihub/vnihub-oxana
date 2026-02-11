@@ -16,8 +16,13 @@ export default async function ProjectLayout({
       id: projectId,
       workspaceId: workspaceId,
     },
-    select: {
-      name: true,
+    include: {
+      projectLeader: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
     },
   });
 
@@ -31,6 +36,7 @@ export default async function ProjectLayout({
         workspaceId={workspaceId} 
         projectId={projectId} 
         projectName={project.name} 
+        projectLeader={project.projectLeader}
       />
       <div className="flex-1 overflow-auto">
         {children}

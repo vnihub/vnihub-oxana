@@ -24,7 +24,8 @@ import {
   Loader2,
   Download,
   ListTodo,
-  Plus
+  Plus,
+  GanttChart
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -67,6 +68,9 @@ export function TaskDetailSheet({ taskId, workspaceId, projectId, onClose }: Tas
   const [description, setDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [subtaskTitle, setSubtaskTitle] = useState("");
+
+  const [isStartDateOpen, setIsStartDatePopoverOpen] = useState(false);
+  const [isDueDateOpen, setIsDueDatePopoverOpen] = useState(false);
 
   const { data: task, isLoading, error } = useQuery({
     queryKey: ["task", taskId],
@@ -414,9 +418,42 @@ export function TaskDetailSheet({ taskId, workspaceId, projectId, onClose }: Tas
                   <div className="flex items-center">
                     <div className="flex items-center gap-2 text-muted-foreground w-24">
                       <CalendarLucide className="h-4 w-4" />
+                      <span>Start Date</span>
+                    </div>
+                    <Popover open={isStartDateOpen} onOpenChange={setIsStartDatePopoverOpen} modal={false}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={cn(
+                            "h-8 px-2 font-medium justify-start text-left hover:bg-slate-100 relative z-50 pointer-events-auto",
+                            !task.startDate && "text-muted-foreground"
+                          )}
+                        >
+                          {task.startDate ? format(new Date(task.startDate), "PPP") : "No date"}
+                          <ChevronDown className="ml-2 h-3 w-3 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 z-[110]" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={task.startDate ? new Date(task.startDate) : undefined}
+                          onSelect={(date) => {
+                            updateTaskMutation.mutate({ startDate: date });
+                            setIsStartDatePopoverOpen(false);
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="flex items-center gap-2 text-muted-foreground w-24">
+                      <CalendarLucide className="h-4 w-4" />
                       <span>Due Date</span>
                     </div>
-                    <Popover modal={false}>
+                    <Popover open={isDueDateOpen} onOpenChange={setIsDueDatePopoverOpen} modal={false}>
                       <PopoverTrigger asChild>
                         <Button
                           variant="ghost"
@@ -434,11 +471,63 @@ export function TaskDetailSheet({ taskId, workspaceId, projectId, onClose }: Tas
                         <Calendar
                           mode="single"
                           selected={task.dueDate ? new Date(task.dueDate) : undefined}
-                          onSelect={(date) => updateTaskMutation.mutate({ dueDate: date })}
+                          onSelect={(date) => {
+                            updateTaskMutation.mutate({ dueDate: date });
+                            setIsDueDatePopoverOpen(false);
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
                     </Popover>
+                  </div>
+                </div>
+
+                <div className="space-y-4 pt-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold flex items-center gap-2">
+                      <GanttChart className="h-4 w-4" />
+                      Dependencies
+                    </h4>
+                  </div>
+                  <div className="space-y-2">
+                    {task.predecessors?.map((pred: any) => (
+                      <div key={pred.id} className="flex items-center justify-between p-2 border rounded-lg bg-slate-50 text-sm">
+                        <span className="truncate flex-1">{pred.title}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                          onClick={() => {
+                            const newPredecessorIds = task.predecessors
+                              .filter((p: any) => p.id !== pred.id)
+                              .map((p: any) => p.id);
+                            updateTaskMutation.mutate({ predecessorIds: newPredecessorIds });
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                    <DropdownMenu modal={false}>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="w-full text-xs gap-1 h-8 border-dashed">
+                          <Plus className="h-3 w-3" />
+                          Add Dependency
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-[300px] z-[110] max-h-[300px] overflow-y-auto">
+                        {queryClient.getQueryData<any[]>(["tasks", projectId])
+                          ?.filter(t => t.id !== task.id && !task.predecessors?.some((p: any) => p.id === t.id))
+                          .map((t) => (
+                            <DropdownMenuItem key={t.id} onClick={() => {
+                              const newPredecessorIds = [...(task.predecessors?.map((p: any) => p.id) || []), t.id];
+                              updateTaskMutation.mutate({ predecessorIds: newPredecessorIds });
+                            }}>
+                              {t.title}
+                            </DropdownMenuItem>
+                          ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 

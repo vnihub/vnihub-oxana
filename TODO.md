@@ -26,6 +26,12 @@
     - [x] Profile Management (Name editing & Manual Avatar Upload)
     - [x] Task Attachments (Local storage system)
     - [x] Real-time updates (Pusher integration)
+    - [x] Interactive Timeline (Gantt Chart) with dependencies
+
+- [x] **Maintenance & Bug Fixes**
+    - [x] Fixed missing task list on project pages
+    - [x] Resolved Prisma client out-of-sync issues with dependencies
+    - [x] Improved API error logging
 
 - [ ] **Next Steps**
     - [ ] Global Search (Quick navigation across workspace)
