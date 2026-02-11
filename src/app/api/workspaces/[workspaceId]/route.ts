@@ -51,3 +51,73 @@ export async function GET(
     return new NextResponse(`Internal Error: ${error.message}`, { status: 500 });
   }
 }
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ workspaceId: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return new NextResponse("Unauthorized", { status: 401 });
+
+    const { workspaceId } = await params;
+    const body = await req.json();
+    const { name, resetInviteCode } = body;
+
+    // Verify user is OWNER or ADMIN
+    const membership = await prisma.workspaceMember.findUnique({
+      where: {
+        workspaceId_userId: { workspaceId, userId: session.user.id }
+      }
+    });
+
+    if (!membership || (membership.role !== "OWNER" && membership.role !== "ADMIN")) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    const data: any = {};
+    if (name) data.name = name;
+    if (resetInviteCode) data.inviteCode = `inv_${Math.random().toString(36).substring(2, 9)}`;
+
+    const workspace = await prisma.workspace.update({
+      where: { id: workspaceId },
+      data
+    });
+
+    return NextResponse.json(workspace);
+  } catch (error) {
+    console.error("[WORKSPACE_PATCH]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ workspaceId: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return new NextResponse("Unauthorized", { status: 401 });
+
+    const { workspaceId } = await params;
+
+    // Only OWNER can delete the entire workspace
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      select: { ownerId: true }
+    });
+
+    if (!workspace || workspace.ownerId !== session.user.id) {
+      return new NextResponse("Only the owner can delete the workspace", { status: 403 });
+    }
+
+    await prisma.workspace.delete({
+      where: { id: workspaceId }
+    });
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error("[WORKSPACE_DELETE]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}

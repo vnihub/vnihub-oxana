@@ -172,22 +172,24 @@ export default function MembersPage({ params }: MembersPageProps) {
                     Loading members...
                   </TableCell>
                 </TableRow>
-              ) : members?.map((member: any) => (
-                <TableRow key={member.id}>
+              ) : members?.map((membership: any) => (
+                <TableRow key={membership.user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={member.image} />
-                        <AvatarFallback>{member.name?.[0]}</AvatarFallback>
+                        <AvatarImage src={membership.user.image} />
+                        <AvatarFallback>{membership.user.name?.[0]}</AvatarFallback>
                       </Avatar>
-                      <span className="font-medium">{member.name}</span>
+                      <span className="font-medium">{membership.user.name}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {member.email}
+                    {membership.user.email}
                   </TableCell>
                   <TableCell>
-                    <span className="capitalize">Member</span>
+                    <span className="capitalize px-2 py-1 bg-slate-100 rounded-md text-xs font-medium">
+                      {membership.role.toLowerCase()}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}

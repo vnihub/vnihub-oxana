@@ -450,19 +450,20 @@ export function TaskDetailSheet({
                           <DropdownMenuItem onClick={() => updateTaskMutation.mutate({ assigneeId: null })}>
                             Unassigned
                           </DropdownMenuItem>
-                          <Separator className="my-1" />
-                          {members?.map((member: any) => (
-                            <DropdownMenuItem key={member.id} onClick={() => updateTaskMutation.mutate({ assigneeId: member.id })}>
-                              <div className="flex items-center gap-2">
-                                <Avatar className="h-5 w-5">
-                                  <AvatarImage src={member.image} />
-                                  <AvatarFallback className="text-[10px]">{member.name?.[0]}</AvatarFallback>
-                                </Avatar>
-                                <span>{member.name}</span>
-                              </div>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
+                                                  <Separator className="my-1" />
+                                                  {members?.map((member: any) => (
+                                                    <DropdownMenuItem key={member.user.id} onClick={() => updateTaskMutation.mutate({ assigneeId: member.user.id })}>
+                                                      <div className="flex items-center gap-2">
+                                                        <Avatar className="h-5 w-5">
+                                                          <AvatarImage src={member.user.image} />
+                                                          <AvatarFallback className="text-[10px]">{member.user.name?.[0]}</AvatarFallback>
+                                                        </Avatar>
+                                                        <span>{member.user.name}</span>
+                                                      </div>
+                                                    </DropdownMenuItem>
+                                                  ))}
+                                                </DropdownMenuContent>
+                          
                       )}
                     </DropdownMenu>
                   </div>

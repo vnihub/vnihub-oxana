@@ -199,13 +199,13 @@ export default function ProjectSettingsPage({
               </SelectTrigger>
               <SelectContent>
                 {members?.map((member: any) => (
-                  <SelectItem key={member.id} value={member.id}>
+                  <SelectItem key={member.user.id} value={member.user.id}>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-5 w-5">
-                        <AvatarImage src={member.image} />
-                        <AvatarFallback>{member.name?.[0]}</AvatarFallback>
+                        <AvatarImage src={member.user.image} />
+                        <AvatarFallback>{member.user.name?.[0]}</AvatarFallback>
                       </Avatar>
-                      <span>{member.name}</span>
+                      <span>{member.user.name}</span>
                     </div>
                   </SelectItem>
                 ))}

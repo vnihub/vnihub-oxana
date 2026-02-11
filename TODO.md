@@ -42,6 +42,11 @@
         - [x] Save existing project as template
         - [x] Delete templates from library
         - [x] Sanitized templates (removes dates and assignees)
+    - [x] Workspace Settings
+        - [x] General: Rename workspace & manage invite links
+        - [x] Members: Role management (Owner, Admin, Member) and removal
+        - [x] Archive: Library of archived projects for easy restoration
+        - [x] Danger Zone: Full workspace deletion with confirmation
 
 - [x] **Maintenance & Bug Fixes**
     - [x] Fixed missing task list on project pages
@@ -60,7 +65,12 @@
     - [ ] User Roles & Permissions (Strict enforcement of Owner, Admin, Member)
     - [ ] Multi-Assignees (Assign multiple members to a task)
     - [ ] Task Tags/Labels (Colored categories for tasks)
-    - [ ] Workspace Settings (Central hub for workspace management)
+    - [x] Workspace Settings
+        - [x] General: Rename workspace & manage invite links
+        - [x] Members: Role management (Owner, Admin, Member) and removal
+        - [x] Archive: Library of archived projects for easy restoration
+        - [x] Danger Zone: Full workspace deletion with confirmation
+        - [x] Streamlined navigation (Removed redundant sidebar links)
     - [ ] Activity Export (Export project data to CSV/PDF)
 
 ## How to Test

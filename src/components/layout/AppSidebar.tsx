@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   DropdownMenu, 
@@ -56,6 +57,19 @@ export function AppSidebar({ workspace, projects }: AppSidebarProps) {
   const activeProjects = projects.filter(p => !p.isArchived);
   const archivedProjects = projects.filter(p => p.isArchived);
 
+  // Fetch the current user's role from the queryClient or a new query
+  // For simplicity, we can also pass the user role as a prop, but let's check membership
+  const { data: members } = useQuery({
+    queryKey: ["members", workspace.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/workspaces/${workspace.id}/members`);
+      return res.json();
+    },
+  });
+
+  const currentUserMembership = members?.find((m: any) => m.user.id === session?.user?.id);
+  const isAdminOrOwner = currentUserMembership?.role === "OWNER" || currentUserMembership?.role === "ADMIN";
+
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
@@ -80,14 +94,16 @@ export function AppSidebar({ workspace, projects }: AppSidebarProps) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname.includes("/members")}>
-                <Link href={`/workspaces/${workspace.id}/members`}>
-                  <Users className="h-4 w-4" />
-                  <span>Members</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {isAdminOrOwner && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname.includes("/settings")}>
+                  <Link href={`/workspaces/${workspace.id}/settings`}>
+                    <Settings className="h-4 w-4" />
+                    <span>Workspace Settings</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           </SidebarMenu>
         </SidebarGroup>
 
