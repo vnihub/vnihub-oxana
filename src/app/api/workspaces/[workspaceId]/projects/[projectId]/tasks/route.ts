@@ -68,9 +68,9 @@ export async function POST(
         startDate: startDate ? new Date(startDate) : null,
         dueDate: dueDate ? new Date(dueDate) : null,
         projectId,
-        assigneeId,
+        assigneeId: assigneeId || null,
         parentId: parentId || null,
-        sectionId: sectionId || null,
+        sectionId: (sectionId === "uncategorized" || !sectionId) ? null : sectionId,
       },
     });
 
