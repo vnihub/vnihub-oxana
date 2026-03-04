@@ -83,12 +83,12 @@
     - [ ] **Project Roles**: Define specific roles within a project (not just workspace)
     - [ ] **Email Verification**: Formalize account creation with email confirmation
 
-- [ ] **Infrastructure & Deployment (Ref: [DEPLOYMENT.md](DEPLOYMENT.md))**
-    - [ ] **Railway Setup (Faza 1)**
-        - [ ] Verify `.env` variables consistency
-        - [ ] Configure Railway project and GitHub connection
-        - [ ] Set up **Railway Volumes** for SQLite and uploads
-        - [ ] First deployment and production testing
+- [x] **Infrastructure & Deployment (Ref: [DEPLOYMENT.md](DEPLOYMENT.md))**
+    - [x] **Railway Setup (Faza 1)**
+        - [x] Verify `.env` variables consistency
+        - [x] Configure Railway project and GitHub connection
+        - [x] Set up **Railway Volumes** for SQLite and uploads
+        - [x] First deployment and production testing
     - [ ] **Future Optimization (Faza 2)**
         - [ ] Migrate to VPS (DigitalOcean/Hetzner)
         - [ ] Evaluate migration to PostgreSQL based on load

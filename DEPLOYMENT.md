@@ -35,8 +35,13 @@ Acest document descrie planul de lansare și evoluție a infrastructurii pentru 
     - Migrarea datelor folosind un script de conversie (Prisma facilitează acest proces).
 
 ## Variabile de Mediu Necesare (Secrete)
-Pentru ambele faze, vom avea nevoie de:
-- `DATABASE_URL`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
-- `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_CLUSTER`
+Pentru ambele faze, avem nevoie de următoarele variabile configurate pe Railway:
+- `DATABASE_URL`: `file:/app/prisma/dev.db` (Indică volumul persistent)
+- `NEXTAUTH_SECRET`: Cheia de securitate pentru sesiuni
+- `NEXTAUTH_URL`: URL-ul public al aplicației (ex: `https://oxana-production.up.railway.app`)
+- `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER`
+
+## Configurare Volume Persistente (Railway)
+Pentru a asigura persistența datelor între deploy-uri, am configurat:
+1. **Bază de date:** Mount Path `/app/prisma` legat la un volum persistent.
+2. **Media/Uploads:** Mount Path `/app/public/uploads` legat la un volum persistent.

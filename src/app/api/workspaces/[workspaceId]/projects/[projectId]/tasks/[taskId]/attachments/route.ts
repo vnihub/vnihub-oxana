@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { writeFile, unlink, mkdir } from "fs/promises";
 import path from "path";
+import { getUploadDir, getFullUploadPath, getFileUrl } from "@/lib/storage";
 
 export async function POST(
   req: Request,
@@ -33,18 +34,20 @@ export async function POST(
 
     const fileExtension = file.name.split(".").pop();
     const fileName = `${taskId}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExtension}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "tasks");
-    const uploadPath = path.join(uploadDir, fileName);
+    
+    const uploadDir = path.join(getUploadDir(), "tasks");
+    const uploadPath = getFullUploadPath(fileName, "tasks");
 
     // Ensure directory exists
     await mkdir(uploadDir, { recursive: true });
 
     await writeFile(uploadPath, buffer);
 
+    const attachmentUrl = getFileUrl(fileName, "tasks");
     const attachment = await prisma.attachment.create({
       data: {
         name: file.name,
-        url: `/uploads/tasks/${fileName}`,
+        url: attachmentUrl,
         size: file.size,
         type: file.type,
         taskId: taskId,

@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { getUploadDir, getFullUploadPath, getFileUrl } from "@/lib/storage";
 
 export async function POST(req: Request) {
   try {
@@ -37,8 +38,9 @@ export async function POST(req: Request) {
     // Create unique filename
     const fileExtension = file.name.split(".").pop();
     const fileName = `${session.user.id}-${Date.now()}.${fileExtension}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    const uploadPath = path.join(uploadDir, fileName);
+    
+    const uploadDir = getUploadDir();
+    const uploadPath = getFullUploadPath(fileName);
 
     // Ensure directory exists
     await mkdir(uploadDir, { recursive: true });
@@ -47,7 +49,7 @@ export async function POST(req: Request) {
     await writeFile(uploadPath, buffer);
 
     // Update user profile with the new image URL
-    const imageUrl = `/uploads/${fileName}`;
+    const imageUrl = getFileUrl(fileName);
     await prisma.user.update({
       where: { id: session.user.id },
       data: { image: imageUrl },
