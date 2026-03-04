@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name } = await req.json();
+    const { email, password, firstName, lastName } = await req.json();
 
-    if (!email || !password) {
-      return new NextResponse("Missing email or password", { status: 400 });
+    if (!email || !password || !firstName || !lastName) {
+      return new NextResponse("Missing required fields", { status: 400 });
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -25,7 +25,9 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: {
         email,
-        name,
+        firstName,
+        lastName,
+        name: `${firstName} ${lastName}`.trim(),
         password: hashedPassword,
       },
     });

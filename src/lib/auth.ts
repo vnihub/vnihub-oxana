@@ -55,6 +55,8 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
           image: user.image,
         };
@@ -66,6 +68,8 @@ export const authOptions: NextAuthOptions = {
       console.log("Session callback triggered");
       if (token && session.user) {
         session.user.id = token.id as string;
+        session.user.firstName = token.firstName as string | null;
+        session.user.lastName = token.lastName as string | null;
       }
       return session;
     },
@@ -73,6 +77,18 @@ export const authOptions: NextAuthOptions = {
       console.log("JWT callback triggered");
       if (user) {
         token.id = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+      } else if (token.id) {
+        // Fetch fresh data if user is not provided (periodic check)
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { firstName: true, lastName: true }
+        });
+        if (dbUser) {
+          token.firstName = dbUser.firstName;
+          token.lastName = dbUser.lastName;
+        }
       }
       return token;
     },

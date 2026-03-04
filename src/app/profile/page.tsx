@@ -31,7 +31,8 @@ import Link from "next/link";
 export default function ProfilePage() {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
   const { data: user, isLoading } = useQuery({
@@ -44,13 +45,14 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (user?.name) {
-      setName(user.name);
+    if (user) {
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
     }
   }, [user]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: { name?: string; image?: string }) => {
+    mutationFn: async (data: { firstName?: string; lastName?: string; image?: string }) => {
       const res = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -112,6 +114,8 @@ export default function ProfilePage() {
     );
   }
 
+  const isChanged = firstName !== (user?.firstName || "") || lastName !== (user?.lastName || "");
+
   return (
     <div className="container max-w-2xl py-10">
       <div className="mb-6 flex items-center justify-between">
@@ -148,7 +152,7 @@ export default function ProfilePage() {
                 <Avatar className="h-24 w-24 border-2 border-slate-100">
                   <AvatarImage src={user?.image || ""} />
                   <AvatarFallback className="text-2xl font-semibold">
-                    {user?.name?.[0] || user?.email?.[0] || "U"}
+                    {user?.firstName?.[0] || user?.email?.[0] || "U"}
                   </AvatarFallback>
                 </Avatar>
                 
@@ -191,30 +195,42 @@ export default function ProfilePage() {
             <Separator />
 
             <div className="grid gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Display Name</Label>
-                <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
                   <Input 
-                    id="name" 
-                    value={name} 
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
+                    id="firstName" 
+                    value={firstName} 
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Enter first name"
                   />
-                  <Button 
-                    disabled={updateProfileMutation.isPending || name === user?.name}
-                    onClick={() => updateProfileMutation.mutate({ name })}
-                  >
-                    {updateProfileMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Save className="h-4 w-4 mr-2" />
-                    )}
-                    Save
-                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input 
+                    id="lastName" 
+                    value={lastName} 
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Enter last name"
+                  />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="flex justify-end">
+                <Button 
+                  disabled={updateProfileMutation.isPending || !isChanged}
+                  onClick={() => updateProfileMutation.mutate({ firstName, lastName })}
+                >
+                  {updateProfileMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  Save Changes
+                </Button>
+              </div>
+
+              <div className="space-y-2 pt-4">
                 <Label htmlFor="email">Email Address</Label>
                 <Input 
                   id="email" 

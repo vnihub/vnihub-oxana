@@ -16,6 +16,8 @@ export async function GET() {
       select: {
         id: true,
         name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         image: true,
         memberships: {
@@ -51,18 +53,28 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { name, image } = body;
+    const { firstName, lastName, image } = body;
 
-    if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
+    const data: any = {};
+    if (firstName !== undefined) data.firstName = firstName;
+    if (lastName !== undefined) data.lastName = lastName;
+    if (image !== undefined) data.image = image;
+
+    if (firstName !== undefined || lastName !== undefined) {
+      // Re-fetch current values to combine them correctly
+      const currentUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { firstName: true, lastName: true }
+      });
+      
+      const fName = firstName !== undefined ? firstName : currentUser?.firstName || "";
+      const lName = lastName !== undefined ? lastName : currentUser?.lastName || "";
+      data.name = `${fName} ${lName}`.trim();
     }
 
     const user = await prisma.user.update({
       where: { id: session.user.id },
-      data: {
-        name,
-        image,
-      },
+      data,
     });
 
     return NextResponse.json(user);
