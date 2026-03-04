@@ -126,6 +126,7 @@ export function TaskModal({
         assigneeId: undefined,
         startDate: undefined,
         dueDate: undefined,
+        sectionId: undefined,
       });
     } catch (error: any) {
       toast.error(error.message);

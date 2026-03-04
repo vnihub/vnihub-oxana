@@ -375,8 +375,8 @@ export default function WorkspaceSettingsPage({
                           </Button>
                         )}
                         {membership.role === "OWNER" && (
-                          <div className="flex justify-end pr-2">
-                            <Shield className="h-4 w-4 text-amber-500" title="Workspace Owner" />
+                          <div className="flex justify-end pr-2" title="Workspace Owner">
+                            <Shield className="h-4 w-4 text-amber-500" />
                           </div>
                         )}
                       </TableCell>

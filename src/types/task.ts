@@ -11,4 +11,5 @@ export type TaskWithAssignee = Task & {
   } | null;
   predecessors?: Task[];
   successors?: Task[];
+  subtasks?: Task[];
 };
