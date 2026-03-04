@@ -102,9 +102,9 @@ function SortableTaskRow({
           <MoreHorizontal className="h-3 w-3 rotate-90 text-muted-foreground" />
         </div>
         <span className="truncate">{task.title}</span>
-        {task.subtasks?.length > 0 && (
+        {(task.subtasks?.length ?? 0) > 0 && (
           <Badge variant="outline" className="text-[9px] px-1 h-3.5 gap-1 opacity-50 font-normal">
-            {task.subtasks.length} subtasks
+            {task.subtasks?.length} subtasks
           </Badge>
         )}
       </TableCell>
