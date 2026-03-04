@@ -6,20 +6,20 @@ Acest document descrie planul de lansare și evoluție a infrastructurii pentru 
 **Scop:** Lansarea rapidă pentru feedback de la colegi.
 
 - **Platformă:** [Railway.app](https://railway.app)
-- **Bază de Date:** SQLite (`prisma/dev.db`)
-- **Stocare Fișiere:** Local (`public/uploads`)
+- **Bază de Date:** SQLite (`dev.db`) în volum persistent.
+- **Stocare Fișiere:** Unificată în volum persistent (via `STORAGE_PATH`).
 - **Configurație Critică:**
-    - Utilizarea **Railway Volumes** pentru persistența fișierului `.db` și a folderului de `uploads`.
+    - Utilizarea unui **singur Railway Volume** montat la `/app/storage`.
+    - **Start Command:** `npx prisma db push && npm run start` (asigură crearea tabelelor pe serverul nou).
     - Conectare automată cu GitHub pentru Continuous Deployment (CD).
-- **Avantaje:** HTTPS automat, configurare rapidă, ușurință în remedierea bug-urilor raportate de colegi.
+- **Avantaje:** HTTPS automat, persistente date (DB + Media) sub o singură umbrelă.
 
 ## Faza 2: Optimizare și Control (Migrare VPS)
 **Scop:** Reducerea costurilor pe termen lung și control total asupra serverului.
 
 - **Platformă:** VPS (DigitalOcean, Hetzner sau similar).
 - **Metodă de Migrare:**
-    - Transferul fișierului `dev.db` de pe Railway pe VPS.
-    - Transferul folderului `uploads`.
+    - Transferul întregului conținut din `/app/storage` (care include `dev.db` și folderul `uploads`) de pe Railway pe VPS.
     - Configurarea unui proces de rulare continuă (PM2 sau Docker).
 - **Bază de Date:** Continuăm cu SQLite până când traficul impune o schimbare.
 
@@ -29,19 +29,15 @@ Acest document descrie planul de lansare și evoluție a infrastructurii pentru 
 - **Indicatori pentru migrare:**
     - Erori frecvente de tip "Database is locked".
     - Nevoia de a rula aplicația pe mai multe servere simultan (Load Balancing).
-    - Nevoia de funcții avansate de căutare (Full Text Search).
-- **Proces:**
-    - Modificarea provider-ului în `schema.prisma`.
-    - Migrarea datelor folosind un script de conversie (Prisma facilitează acest proces).
+- **Proces:** Modificarea provider-ului în `schema.prisma` și migrarea datelor.
 
-## Variabile de Mediu Necesare (Secrete)
-Pentru ambele faze, avem nevoie de următoarele variabile configurate pe Railway:
-- `DATABASE_URL`: `file:/app/prisma/dev.db` (Indică volumul persistent)
+## Variabile de Mediu Necesare (Railway)
+- `DATABASE_URL`: `file:/app/storage/dev.db`
+- `STORAGE_PATH`: `/app/storage`
 - `NEXTAUTH_SECRET`: Cheia de securitate pentru sesiuni
-- `NEXTAUTH_URL`: URL-ul public al aplicației (ex: `https://oxana-production.up.railway.app`)
+- `NEXTAUTH_URL`: URL-ul public al aplicației (ex: `https://vnihub-oxana-production.up.railway.app`)
 - `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET`, `NEXT_PUBLIC_PUSHER_KEY`, `NEXT_PUBLIC_PUSHER_CLUSTER`
 
-## Configurare Volume Persistente (Railway)
-Pentru a asigura persistența datelor între deploy-uri, am configurat:
-1. **Bază de date:** Mount Path `/app/prisma` legat la un volum persistent.
-2. **Media/Uploads:** Mount Path `/app/public/uploads` legat la un volum persistent.
+## Configurare Volum Persistent (Railway)
+- **Mount Path:** `/app/storage`
+- **Conținut:** Acest folder va conține automat `dev.db` și subfolderul `uploads/` creat de aplicație.

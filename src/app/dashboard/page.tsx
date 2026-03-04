@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { JoinWorkspaceForm } from "@/components/auth/JoinWorkspaceForm";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -34,22 +35,23 @@ export default async function DashboardPage() {
         <CardHeader>
           <CardTitle>Welcome to Oxana</CardTitle>
           <CardDescription>
-            You are not part of any workspace yet. Create one to get started.
+            You are not part of any workspace yet. Get started by creating one or joining a team.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
             Workspaces are where you and your team can collaborate on projects and tasks.
           </p>
-        </CardContent>
-        <CardFooter>
+          
           <Button asChild className="w-full">
             <Link href="/workspaces/create">
               <Plus className="mr-2 h-4 w-4" />
               Create your first workspace
             </Link>
           </Button>
-        </CardFooter>
+
+          <JoinWorkspaceForm />
+        </CardContent>
       </Card>
     </div>
   );

@@ -87,7 +87,9 @@
     - [x] **Railway Setup (Faza 1)**
         - [x] Verify `.env` variables consistency
         - [x] Configure Railway project and GitHub connection
-        - [x] Set up **Railway Volumes** for SQLite and uploads
+        - [x] Set up **Unified Storage Volume** (`/app/storage`) for SQLite and uploads
+        - [x] Implement dynamic file serving from persistent volume
+        - [x] Automated schema initialization (`npx prisma db push`) on startup
         - [x] First deployment and production testing
     - [ ] **Future Optimization (Faza 2)**
         - [ ] Migrate to VPS (DigitalOcean/Hetzner)
