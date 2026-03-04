@@ -68,32 +68,14 @@
     - [ ] Global Search (Quick navigation across workspace)
     - [ ] Notifications system
     - [x] Manual Task Sorting (Drag & Drop reordering in List and Kanban)
-    - [ ] User Roles & Permissions (Strict cross-workspace enforcement)
-    - [ ] Multi-Assignees (Assign multiple members to a task)
-    - [ ] Activity Export (Export project data to CSV/PDF)
-
-- [ ] **Colleague Feedback (Backlog)**
-    - [x] **Inline Task Addition**: Add tasks directly in the list row without a modal
-    - [ ] **Status Management**: Custom statuses or faster status switching
-    - [ ] **Visibility Filters**: Toggle to "Hide Done" tasks in all views
-    - [ ] **Timeline Export**: Export project timeline to external formats
-    - [ ] **List View Sorting**: Clickable column headers to sort by name, date, priority, etc.
-    - [ ] **Enhanced "My Tasks"**: Add advanced filtering, custom grouping, and sorting
-    - [ ] **Team Visibility**: "Tasks by others" view to see teammate workloads
-    - [ ] **Project Roles**: Define specific roles within a project (not just workspace)
-    - [ ] **Email Verification**: Formalize account creation with email confirmation
-
-- [x] **Infrastructure & Deployment (Ref: [DEPLOYMENT.md](DEPLOYMENT.md))**
-    - [x] **Railway Setup (Faza 1)**
-        - [x] Verify `.env` variables consistency
-        - [x] Configure Railway project and GitHub connection
-        - [x] Set up **Unified Storage Volume** (`/app/storage`) for SQLite and uploads
-        - [x] Implement dynamic file serving from persistent volume
-        - [x] Automated schema initialization (`npx prisma db push`) on startup
-        - [x] First deployment and production testing
-    - [ ] **Future Optimization (Faza 2)**
-        - [ ] Migrate to VPS (DigitalOcean/Hetzner)
-        - [ ] Evaluate migration to PostgreSQL based on load
+    - [ ] **Advanced Roles & Permissions (Future Module)**
+    - [ ] **Super Admin**: Full platform control (Global settings, Billing, System health)
+    - [ ] **Admin**: Workspace management (Invite/Remove members, Workspace settings)
+    - [ ] **Executive**: Strategic overview (Can see all projects and reports, but might not edit tasks)
+    - [ ] **Manager**: Project control (Create projects, manage timelines, assign leaders)
+    - [ ] **Member/Contributor**: Standard task management (Create/Edit tasks they belong to)
+    - [ ] **Viewer/Guest**: Read-only access to specific projects or tasks
+    - [ ] Strict cross-workspace enforcement of these roles
 
 Cum putem schimba statuturile?
 Filtru pentru a ascunde cele done
