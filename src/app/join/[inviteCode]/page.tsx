@@ -22,6 +22,12 @@ export default function JoinPage({ params }: JoinPageProps) {
           method: "POST",
         });
 
+        if (res.status === 401) {
+          // If user is not logged in, redirect to register but come back here after
+          router.push(`/register?callbackUrl=/join/${inviteCode}`);
+          return;
+        }
+
         if (!res.ok) {
           throw new Error("Failed to join workspace. The link might be invalid.");
         }
