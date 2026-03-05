@@ -480,6 +480,7 @@ export function TaskListView({ workspaceId, projectId, isArchived = false }: Tas
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead className="w-[40%]">Task name</TableHead>
+                <TableHead>Assignee</TableHead>
                 <TableHead>Due date</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Status</TableHead>

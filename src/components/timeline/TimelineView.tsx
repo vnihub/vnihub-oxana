@@ -383,7 +383,7 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
             
             {/* Today Line */}
             <div 
-              className="absolute top-0 bottom-0 w-px bg-blue-600 z-20 pointer-events-none"
+              className="absolute top-0 bottom-0 w-px bg-blue-600 z-10 pointer-events-none"
               style={{ 
                 left: `calc(16rem + ${differenceInDays(startOfDay(new Date()), startDate) * (zoomLevel === 'days' ? columnWidth : columnWidth / 7) + (zoomLevel === 'days' ? columnWidth / 2 : 0)}px)` 
               }}
