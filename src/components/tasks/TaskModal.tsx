@@ -66,16 +66,27 @@ export function TaskModal({
     sectionId: initialSectionId,
   });
 
-  // Update status and section when modal opens
+  const { data: project } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: async () => {
+      const res = await fetch(`/api/workspaces/${workspaceId}/projects/${projectId}`);
+      if (!res.ok) throw new Error("Failed to fetch project");
+      return res.json();
+    },
+    enabled: isOpen,
+  });
+
+  // Update status, section and default assignee when modal opens
   useEffect(() => {
     if (isOpen) {
       setFormData(prev => ({
         ...prev,
         status: initialStatus,
-        sectionId: initialSectionId
+        sectionId: initialSectionId,
+        assigneeId: prev.assigneeId || project?.projectLeaderId || undefined
       }));
     }
-  }, [initialStatus, initialSectionId, isOpen]);
+  }, [initialStatus, initialSectionId, isOpen, project?.projectLeaderId]);
 
   const [isStartDateOpen, setIsStartDatePopoverOpen] = useState(false);
   const [isDueDateOpen, setIsDueDatePopoverOpen] = useState(false);
@@ -123,7 +134,7 @@ export function TaskModal({
         description: "",
         status: "TODO",
         priority: "MEDIUM",
-        assigneeId: undefined,
+        assigneeId: project?.projectLeaderId || undefined,
         startDate: undefined,
         dueDate: undefined,
         sectionId: undefined,

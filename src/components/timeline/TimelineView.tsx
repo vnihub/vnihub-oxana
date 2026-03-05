@@ -41,7 +41,6 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
   const endDate = endOfMonth(addMonths(viewDate, zoomLevel === 'days' ? 1 : 5));
   
   const columns = useMemo(() => {
-    // ... same logic
     if (zoomLevel === 'days') {
       return eachDayOfInterval({ start: startDate, end: endDate }).map(date => ({
         date,
@@ -104,7 +103,6 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
     return groups;
   }, [tasks, sections]);
 
-  // Flatten for dependency calculation and rendering
   const flattenedTasks = useMemo(() => {
     return groupedTasks.flatMap(g => g.tasks);
   }, [groupedTasks]);
@@ -135,7 +133,6 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
 
   return (
     <div className="flex flex-col h-full bg-white overflow-hidden">
-      {/* Timeline Header */}
       <div className="flex items-center justify-between p-4 border-b bg-white z-30">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -200,7 +197,6 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
 
       <div className="flex-1 overflow-auto relative">
         <div className="inline-block min-w-full">
-          {/* Header */}
           <div className="flex sticky top-0 z-30 bg-white border-b">
             <div className="w-64 flex-shrink-0 border-r bg-slate-50 p-2 font-medium text-xs text-muted-foreground uppercase tracking-wider flex items-center sticky left-0 z-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
               Task
@@ -229,9 +225,7 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
             </div>
           </div>
 
-          {/* Timeline Body */}
           <div className="relative">
-            {/* SVG Overlay for dependencies */}
             <svg 
               className="absolute inset-0 pointer-events-none z-0" 
               style={{ width: '100%', height: '100%' }}
@@ -242,23 +236,9 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
                 </marker>
               </defs>
               {flattenedTasks.map((task, taskIndex) => {
-                // Account for section headers in Y offset calculation
-                let headerCount = 0;
-                let currentIdx = 0;
-                for (const group of groupedTasks) {
-                  headerCount++;
-                  const taskInGroupIdx = group.tasks.findIndex(t => t.id === task.id);
-                  if (taskInGroupIdx !== -1) {
-                    currentIdx = headerCount + (flattenedTasks.findIndex(t => t.id === task.id) - (flattenedTasks.indexOf(group.tasks[0])));
-                    // Simplified: just track global row index including headers
-                    break;
-                  }
-                }
-                
-                // Let's just use a simpler way to find the row index including headers
                 let rowIndex = 0;
                 for (const group of groupedTasks) {
-                  rowIndex++; // Header row
+                  rowIndex++; 
                   const tIdx = group.tasks.findIndex(t => t.id === task.id);
                   if (tIdx !== -1) {
                     rowIndex += tIdx;
@@ -313,8 +293,7 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
             {groupedTasks.length > 0 ? (
               groupedTasks.map((group) => (
                 <div key={group.id}>
-                  {/* Section Header Row */}
-                  <div className="flex border-b bg-slate-50 sticky left-0 z-20">
+                  <div className="flex border-b bg-slate-50">
                     <div className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 bg-slate-100 sticky left-0 z-30 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pl-4">{group.name}</span>
                     </div>
@@ -329,11 +308,10 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
                     </div>
                   </div>
 
-                  {/* Tasks in Section */}
                   {group.tasks.map((task) => (
                     <div key={task.id} className="flex border-b group hover:bg-gray-50 transition-colors">
                       <div 
-                        className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 overflow-hidden bg-white sticky left-0 z-20 group-hover:bg-slate-50 cursor-pointer pl-6 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]"
+                        className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 overflow-hidden bg-white sticky left-0 z-30 group-hover:bg-slate-50 cursor-pointer pl-6 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]"
                         onClick={() => setSelectedTaskId(task.id)}
                       >
                         <div className={cn(
@@ -381,9 +359,8 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
               <div className="p-12 text-center text-muted-foreground italic">No tasks found in this project.</div>
             )}
             
-            {/* Today Line */}
             <div 
-              className="absolute top-0 bottom-0 w-px bg-blue-600 z-10 pointer-events-none"
+              className="absolute top-0 bottom-0 w-px bg-blue-600 z-20 pointer-events-none"
               style={{ 
                 left: `calc(16rem + ${differenceInDays(startOfDay(new Date()), startDate) * (zoomLevel === 'days' ? columnWidth : columnWidth / 7) + (zoomLevel === 'days' ? columnWidth / 2 : 0)}px)` 
               }}

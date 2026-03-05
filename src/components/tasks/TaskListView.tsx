@@ -169,6 +169,15 @@ export function TaskListView({ workspaceId, projectId, isArchived = false }: Tas
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  const { data: project } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: async () => {
+      const res = await fetch(`/api/workspaces/${workspaceId}/projects/${projectId}`);
+      if (!res.ok) throw new Error("Failed to fetch project");
+      return res.json();
+    },
+  });
+
   const { data: tasks, isLoading: tasksLoading, refetch: refetchTasks } = useQuery<TaskWithAssignee[]>({
     queryKey: ["tasks", projectId],
     queryFn: async () => {
@@ -241,7 +250,8 @@ export function TaskListView({ workspaceId, projectId, isArchived = false }: Tas
           title, 
           sectionId: sectionId === "uncategorized" ? null : sectionId,
           status: "TODO",
-          priority: "MEDIUM"
+          priority: "MEDIUM",
+          assigneeId: project?.projectLeaderId
         }),
       });
       if (!res.ok) throw new Error("Failed to create task");
