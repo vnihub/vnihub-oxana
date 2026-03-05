@@ -10,9 +10,9 @@ Acest document descrie planul de lansare și evoluție a infrastructurii pentru 
 - **Stocare Fișiere:** Unificată în volum persistent (via `STORAGE_PATH`).
 - **Configurație Critică:**
     - Utilizarea unui **singur Railway Volume** montat la `/app/storage`.
-    - **Start Command:** `npx prisma db push && npm run start` (asigură crearea tabelelor pe serverul nou).
+    - **Start Command:** `npx prisma db push && npm run start` (asigură crearea/sincronizarea tabelelor pe server).
     - Conectare automată cu GitHub pentru Continuous Deployment (CD).
-- **Avantaje:** HTTPS automat, persistente date (DB + Media) sub o singură umbrelă.
+- **Securitate Date:** Fișierul `prisma/dev.db` este inclus în `.gitignore` pentru a preveni suprascrierea bazei de date de producție cu date locale.
 
 ## Faza 2: Optimizare și Control (Migrare VPS)
 **Scop:** Reducerea costurilor pe termen lung și control total asupra serverului.
@@ -29,7 +29,7 @@ Acest document descrie planul de lansare și evoluție a infrastructurii pentru 
 - **Indicatori pentru migrare:**
     - Erori frecvente de tip "Database is locked".
     - Nevoia de a rula aplicația pe mai multe servere simultan (Load Balancing).
-- **Proces:** Modificarea provider-ului în `schema.prisma` și migrarea datelor.
+- **Proces:** Modificarea provider-ului în `schema.prisma` (care folosește deja `env("DATABASE_URL")`) și migrarea datelor.
 
 ## Variabile de Mediu Necesare (Railway)
 - `DATABASE_URL`: `file:/app/storage/dev.db`
@@ -40,4 +40,5 @@ Acest document descrie planul de lansare și evoluție a infrastructurii pentru 
 
 ## Configurare Volum Persistent (Railway)
 - **Mount Path:** `/app/storage`
-- **Conținut:** Acest folder va conține automat `dev.db` și subfolderul `uploads/` creat de aplicație.
+- **Conținut:** Acest folder va conține automat `dev.db` și subfolderul `uploads/` (gestionat prin `src/lib/storage.ts`).
+- **Servire Fișiere:** Fișierele sunt servite din volum prin ruta dinamică `/src/app/uploads/[...path]/route.ts`.

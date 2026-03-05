@@ -16,6 +16,7 @@
         - [x] Archive: Library of archived projects for easy restoration
         - [x] Danger Zone: Full workspace deletion with confirmation
     - [x] **Streamlined Sidebar**: Removed redundant links; consolidated administration into Settings
+    - [x] **Automated Join Flow**: New users are automatically enrolled in workspaces via invite links after registration.
 
 - [x] **Project & Task Management**
     - [x] Project creation (Scratch vs Template)
@@ -44,6 +45,7 @@
     - [x] Task Comments
     - [x] **Real-time Activity Log** (with state tracking and relative timestamps)
     - [x] Profile Management (Name editing & Manual Avatar Upload)
+    - [x] **Split Name Support**: Added firstName and lastName fields for better user identification.
     - [x] Task Attachments (Local storage system)
     - [x] Real-time updates (Pusher integration)
     - [x] Project Leader assignment and display
@@ -68,6 +70,10 @@
     - [ ] Global Search (Quick navigation across workspace)
     - [ ] Notifications system
     - [x] Manual Task Sorting (Drag & Drop reordering in List and Kanban)
+    - [ ] **Account & Security Enhancements**
+        - [ ] **Email Verification**: Formalize account creation with email confirmation link.
+        - [ ] **Password Management**: Allow users to change their password from profile settings.
+    - [ ] **Internationalization (i18n)**: Support for multiple languages (Romanian and Russian).
     - [ ] **Advanced Roles & Permissions (Future Module)**
     - [ ] **Super Admin**: Full platform control (Global settings, Billing, System health)
     - [ ] **Admin**: Workspace management (Invite/Remove members, Workspace settings)

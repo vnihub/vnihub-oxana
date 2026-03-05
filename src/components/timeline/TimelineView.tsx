@@ -201,8 +201,8 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
       <div className="flex-1 overflow-auto relative">
         <div className="inline-block min-w-full">
           {/* Header */}
-          <div className="flex sticky top-0 z-20 bg-white border-b">
-            <div className="w-64 flex-shrink-0 border-r bg-gray-50 p-2 font-medium text-xs text-muted-foreground uppercase tracking-wider flex items-center sticky left-0 z-30">
+          <div className="flex sticky top-0 z-30 bg-white border-b">
+            <div className="w-64 flex-shrink-0 border-r bg-slate-50 p-2 font-medium text-xs text-muted-foreground uppercase tracking-wider flex items-center sticky left-0 z-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
               Task
             </div>
             <div className="flex">
@@ -314,9 +314,9 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
               groupedTasks.map((group) => (
                 <div key={group.id}>
                   {/* Section Header Row */}
-                  <div className="flex border-b bg-slate-50/80 sticky left-0 z-10">
-                    <div className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 bg-slate-100/50 sticky left-0 z-20">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{group.name}</span>
+                  <div className="flex border-b bg-slate-50 sticky left-0 z-20">
+                    <div className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 bg-slate-100 sticky left-0 z-30 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pl-4">{group.name}</span>
                     </div>
                     <div className="flex relative h-12">
                       {columns.map((col) => (
@@ -333,7 +333,7 @@ export function TimelineView({ workspaceId, projectId, isArchived = false }: Tim
                   {group.tasks.map((task) => (
                     <div key={task.id} className="flex border-b group hover:bg-gray-50 transition-colors">
                       <div 
-                        className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 overflow-hidden bg-white sticky left-0 z-10 group-hover:bg-gray-50 cursor-pointer pl-6"
+                        className="w-64 flex-shrink-0 border-r p-2 flex items-center gap-2 overflow-hidden bg-white sticky left-0 z-20 group-hover:bg-slate-50 cursor-pointer pl-6 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]"
                         onClick={() => setSelectedTaskId(task.id)}
                       >
                         <div className={cn(
