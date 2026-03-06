@@ -32,6 +32,12 @@ export function AuthForm({ mode }: AuthFormProps) {
 
     try {
       if (mode === "register") {
+        // Client-side domain check
+        const allowedDomain = "md.anadoluefes.com";
+        if (!formData.email.toLowerCase().endsWith(`@${allowedDomain}`)) {
+          throw new Error(`Registration is restricted to @${allowedDomain} email addresses.`);
+        }
+
         const res = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -78,7 +84,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         <CardDescription>
           {mode === "login"
             ? "Enter your email below to login to your account"
-            : "Enter your information below to create an account"}
+            : "Only @md.anadoluefes.com emails are accepted for registration."}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -112,7 +118,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="name.surname@md.anadoluefes.com"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}

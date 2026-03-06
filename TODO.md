@@ -46,26 +46,31 @@
     - [x] **Real-time Activity Log** (with state tracking and relative timestamps)
     - [x] Profile Management (Name editing & Manual Avatar Upload)
     - [x] **Split Name Support**: Added firstName and lastName fields for better user identification.
+    - [x] **Email Domain Restriction**: Restricted registration to @md.anadoluefes.com for corporate security.
     - [x] Task Attachments (Local storage system)
     - [x] Real-time updates (Pusher integration)
     - [x] Project Leader assignment and display
     - [x] Project Settings (Color, Icon, Leader, Archiving)
     - [x] **Strict Read-Only mode for archived projects**
     - [x] **Keyboard Shortcut 't'** for instant task creation in List View
-    - [x] **Grouped "My Tasks"** view by project for cross-workspace clarity
+    - [x] **Grouped \"My Tasks\"** view by project for cross-workspace clarity
     - [x] **Auto-Assign Project Leader**: New tasks (inline or popup) are automatically assigned to the project leader by default.
+    - [x] **Subtask Inline Editing**: Enabled direct editing of subtask titles in the task detail pane.
 
 - [x] **Maintenance & Bug Fixes**
     - [x] Resolved Prisma client synchronization issues with Turbopack
-    - [x] **API Security**: Replaced detailed error responses with generic "Internal Error" for production
+    - [x] **API Security**: Replaced detailed error responses with generic \"Internal Error\" for production
     - [x] UI Refinement: Improved spacing and layout for Project, Workspace, and Login pages
     - [x] **Compact UI**: Reduced row height across all task lists (List, My Tasks, Subtasks)
     - [x] Optimized Settings page loading speed via targeted API calls
     - [x] Task Pane Housekeeping: Moved name to top, unified selector styles
     - [x] Task Sorting: Fixed order to ensure new tasks appear at the bottom
     - [x] **Fixed P2003 Foreign Key error** in project creation
-    - [x] **Fixed Workspace deletion "Cancel" button** using `DialogClose`
+    - [x] **Fixed Workspace deletion \"Cancel\" button\"** using `DialogClose`
     - [x] **Improved contrast** for Timeline zoom toggle and active states
+    - [x] **Timeline UI Fixes**: Resolved task list overlap and Today Line visibility during horizontal scroll.
+    - [x] **List View Alignment**: Corrected the mismatch between table headers and task row columns.
+    - [x] **Performance Boost**: Optimized project page loading by removing redundant client-side API calls.
 
 - [ ] **Next Steps**
     - [ ] Global Search (Quick navigation across workspace)

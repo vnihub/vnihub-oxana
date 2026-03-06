@@ -10,6 +10,12 @@ export async function POST(req: Request) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
+    // Check for allowed company domain
+    const allowedDomain = "md.anadoluefes.com";
+    if (!email.toLowerCase().endsWith(`@${allowedDomain}`)) {
+      return new NextResponse(`Only ${allowedDomain} email addresses are allowed for registration.`, { status: 400 });
+    }
+
     const existingUser = await prisma.user.findUnique({
       where: {
         email,
